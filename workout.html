@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evolve AI - Workout Plan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --color-bg-dark: #0A0A0F;
+      --color-bg-navy: #12122D;
+      --color-primary: #FF6B35;
+      --color-accent-magenta: #FF2E88;
+      --color-accent-cyan: #00FFFF;
+      --color-text-primary: #FFFFFF;
+      --color-text-secondary: #A0A0A0;
+      --color-surface-glass: rgba(255, 255, 255, 0.08);
+      --glow-primary: 0 0 15px rgba(255, 107, 53, 0.7);
+      --blur-backdrop: blur(10px);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top left, var(--color-bg-navy), var(--color-bg-dark) 70%);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .mobile-container {
+      max-width: 414px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #111;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid #333;
+      border-right: 1px solid #333;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      border-bottom: 1px solid #333;
+      flex-shrink: 0;
+    }
+
+    .app-name {
+      display: flex;
+      align-items: center;
+    }
+
+    .app-name .logo {
+      height: 60px;
+      width: auto;
+      display: block;
+    }
+
+    .header-icons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .header-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      color: #fff;
+    }
+    
+    .content {
+      padding: 20px 15px;
+      flex-grow: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .content::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* 🔽 Updated focus area card */
+    .focus-area-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: var(--blur-backdrop);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-text {
+      flex: 1;
+      margin-right: 10px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+
+    .focus-title {
+      font-size: 20px;   /* smaller */
+      font-weight: 600;
+      margin: 5px 0 10px;
+    }
+
+    .details {
+      display: flex;
+      gap: 15px;  /* smaller gap */
+    }
+
+    .detail-item .detail-label {
+      font-size: 11px;
+      color: #888;
+      margin: 0;
+    }
+
+    .detail-item .detail-value {
+      font-size: 13px;
+      font-weight: 500;
+      margin: 3px 0 0;
+    }
+
+    /* 🔽 Image sizing */
+    /* 🔽 Image sizing (updated) */
+.card-image-container {
+  width: 110px;      /* slightly bigger than before */
+  height: 130px;     /* taller for better proportion */
+  border-radius: 0;  /* remove rounded corners so no "box look" */
+  background: none;  /* ensure no background behind */
+  overflow: visible; /* allow image edges to breathe */
+  flex-shrink: 0;
+}
+
+.focus-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+
+    .plan-preview {
+      margin-bottom: 30px;
+    }
+
+    .plan-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .week-section {
+      margin-bottom: 20px;
+    }
+
+    .week-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .plan-name {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin: 5px 0 10px;
+    }
+
+    .workouts {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      white-space: nowrap;
+      padding-bottom: 10px;
+    }
+    
+    .workouts::-webkit-scrollbar {
+      display: none;
+    }
+
+    .workout-item {
+      display: inline-block;
+      flex-shrink: 0;
+      text-align: center;
+      position: relative;
+      width: 80px;
+      cursor: pointer;
+    }
+
+    .workout-item img {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .duration {
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 5px;
+      color: var(--color-text-secondary);
+    }
+    
+    .bottom-button {
+      display: block;
+      width: 90%;
+      max-width: 300px;
+      margin: 20px auto;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent-magenta));
+      color: var(--color-text-primary);
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid var(--color-primary);
+      width: 20px; height: 20px;
+      -webkit-animation: spin 1s linear infinite;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @-webkit-keyframes spin {
+      0% { -webkit-transform: rotate(0deg); }
+      100% { -webkit-transform: rotate(360deg); }
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Fixed Bottom Navigation */
+    .bottom-nav {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: var(--blur-backdrop);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 414px;
+      z-index: 100;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--color-text-secondary);
+      font-size: 10px;
+      transition: color 0.3s;
+    }
+    
+    .nav-item.active {
+      color: var(--color-primary);
+    }
+    
+    .nav-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    /* Modal for fullscreen image */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none; /* Initially hidden */
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+
+    .modal-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+    }
+
+    .modal-image {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 10px;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      color: #fff;
+      font-size: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 201;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-container">
+    <!-- Header -->
+    <div class="header">
+      <div class="app-name">
+        <img src="https://placehold.co/60x60/12122D/FF6B35?text=Logo" alt="Logo" class="logo">
+      </div>
+
+      <div class="header-icons">
+        <div class="header-icon">
+          <i class="fas fa-bell"></i>
+        </div>
+        <div class="header-icon">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+      <!-- Focus Area Card -->
+      <div class="focus-area-card">
+        <div class="card-text">
+          <p class="section-title">Focus Area</p>
+          <h2 class="focus-title">Toned Arms</h2>
+          <div class="details">
+            <div class="detail-item">
+              <p class="detail-label">Duration</p>
+              <p class="detail-value">10 - 15 min</p>
+            </div>
+            <div class="detail-item">
+              <p class="detail-label">Calories</p>
+              <p class="detail-value">300 kcal/day</p>
+            </div>
+          </div>
+        </div>
+        <div class="card-image-container">
+          <img src="unnamed-removebg-preview.png" class="focus-image" alt="Toned Arms">
+        </div>
+      </div>
+
+      <!-- Plan Preview Section -->
+      <div class="plan-preview">
+        <h2 class="plan-title">Plan Preview</h2>
+        
+        <div id="workouts-container">
+          <div class="week-section">
+            <h3 class="week-title">Week 1</h3>
+            <p class="plan-name">Full Body Activation</p>
+            <div class="workouts">
+              <div class="workout-item">
+                <img src="p11.gif" alt="Workout 1">
+                <p class="duration">60 s</p>
+              </div>
+              <div class="workout-item">
+                <img src="p9.gif" alt="Workout 2">
+                <p class="duration">60 s</p>
+              </div>
+              <div class="workout-item">
+                <img src="p10.gif" alt="Workout 3">
+                <p class="duration">40 s</p>
+              </div>
+              <div class="workout-item">
+                <img src="p1.gif" alt="Workout 4">
+                <p class="duration">60 s</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="week-section">
+            <h3 class="week-title">Week 2</h3>
+            <p class="plan-name">Toned arms</p>
+            <div class="workouts">
+              <div class="workout-item">
+                <img src="https://storage.googleapis.com/g-c-a-01-prod-artifacts/user_uploads/p7.gif" alt="Workout 5">
+                <p class="duration">60 s</p>
+              </div>
+              <div class="workout-item">
+                <img src="p6.gif" alt="Workout 6">
+                <p class="duration">30 s</p>
+              </div>
+              <div class="workout-item">
+                <img src="p5.gif" alt="Workout 7">
+                <p class="duration">60 s</p>
+              </div>
+              <div class="workout-item">
+                <img src="p1.gif" alt="Workout 8">
+                <p class="duration">40 s</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="week-section">
+            <h3 class="week-title">Week 3</h3>
+            <p class="plan-name">Advanced Challenge</p>
+            <div class="workouts">
+              <div class="workout-item">
+                <img src="p1.gif" alt="Workout 9">
+                <p class="duration">40 s</p>
+              </div>
+              <div class="workout-item">
+                <img src="p2.gif" alt="Workout 10">
+                <p class="duration">30 s</p>
+              </div>
+              <div class="workout-item">
+                <img src="p3.gif" alt="Workout 11">
+                <p class="duration">60 s</p>
+              </div>
+              <div class="workout-item">
+                <img src="p4.gif" alt="Workout 12">
+                <p class="duration">40 s</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button id="generate-workout-btn" class="bottom-button">Generate New Workout ✨</button>
+    </div>
+    
+     <!-- Fixed Bottom Navigation -->
+<nav class="bottom-nav">
+  <a href="home.html" class="nav-item">
+    <i class="fas fa-home nav-icon"></i>
+    <span>Home</span>
+  </a>
+  <a href="workout.html" class="nav-item active">
+    <i class="fas fa-dumbbell nav-icon"></i>
+    <span>Workouts</span>
+  </a>
+  <a href="aicoach.html" class="nav-item">
+    <i class="fas fa-utensils nav-icon"></i>
+    <span>AI Coach</span>
+  </a>
+  <a href="reels.html" class="nav-item">
+    <i class="fas fa-video nav-icon"></i>
+    <span>Reels</span>
+  </a>
+  <a href="shop.html" class="nav-item">
+    <i class="fas fa-shopping-bag nav-icon"></i>
+    <span>Shop</span>
+  </a>
+</nav>
+
+  </div>
+
+  <!-- Full-screen modal for image zoom -->
+  <div id="image-modal" class="modal">
+    <span class="modal-close-btn">&times;</span>
+    <div class="modal-content">
+      <img id="modal-image" class="modal-image" src="" alt="Enlarged workout image">
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const generateWorkoutBtn = document.getElementById('generate-workout-btn');
+      const workoutsContainer = document.getElementById('workouts-container');
+      const imageModal = document.getElementById('image-modal');
+      const modalImage = document.getElementById('modal-image');
+      const modalCloseBtn = document.querySelector('.modal-close-btn');
+
+      // Dummy user profile data
+      const userProfile = {
+        height: 175,
+        weight: 75,
+        goal: 'Build Muscle'
+      };
+
+      const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=";
+      const API_KEY = "";
+
+      const generateWorkout = async (button, container) => {
+        const height = userProfile.height || '175';
+        const weight = userProfile.weight || '75';
+        const goal = userProfile.goal || 'Build Muscle';
+
+        const originalButtonText = button.innerHTML;
+        button.innerHTML = `<div class="loading-spinner"></div> Generating...`;
+        button.disabled = true;
+
+        const prompt = `You are a professional fitness coach. Based on a user with a height of ${height}cm, weight of ${weight}kg, and a fitness goal of "${goal}", create a short workout plan. The response must be a JSON array of objects. Each object should have two keys: "exercise" (e.g., "Push-ups") and "duration" (e.g., "3 sets x 10 reps"). The array should contain exactly 5 exercises. Respond with only the JSON array.`;
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                responseMimeType: "application/json"
+              }
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+          const workoutData = JSON.parse(result.candidates[0].content.parts[0].text);
+
+          container.innerHTML = '';
+          
+          const weekSection = document.createElement('div');
+          weekSection.classList.add('week-section');
+          weekSection.innerHTML = `
+            <h3 class="week-title">Generated Plan</h3>
+            <p class="plan-name">Custom Workout</p>
+            <div class="workouts"></div>
+          `;
+          const workoutsList = weekSection.querySelector('.workouts');
+
+          workoutData.forEach(exercise => {
+            const workoutItem = document.createElement('div');
+            workoutItem.classList.add('workout-item');
+            workoutItem.innerHTML = `
+              <i class="fas fa-dumbbell fa-2x" style="color: var(--color-primary);"></i>
+              <p class="duration">${exercise.exercise}: ${exercise.duration}</p>
+            `;
+            workoutsList.appendChild(workoutItem);
+          });
+
+          container.appendChild(weekSection);
+
+        } catch (error) {
+          console.error("Error generating workout:", error);
+          alert("Failed to generate workout. Please try again.");
+        } finally {
+          button.innerHTML = originalButtonText;
+          button.disabled = false;
+        }
+      };
+
+      generateWorkoutBtn.addEventListener('click', () => {
+        generateWorkout(generateWorkoutBtn, workoutsContainer);
+      });
+
+      // Open modal when workout image is clicked
+      document.querySelectorAll('.workout-item img').forEach(img => {
+        img.addEventListener('click', () => {
+          modalImage.src = img.src;
+          imageModal.style.display = 'flex';
+        });
+      });
+
+      // Close modal
+      modalCloseBtn.addEventListener('click', () => {
+        imageModal.style.display = 'none';
+      });
+
+      // Close modal when clicking outside the image
+      imageModal.addEventListener('click', (e) => {
+        if (e.target === imageModal) {
+          imageModal.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

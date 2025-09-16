@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolve AI - AI Coach & Diet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-bg-dark: #0A0A0F;
+            --color-bg-navy: #12122D;
+            --color-primary: #FF6B35;
+            --color-accent-magenta: #FF2E88;
+            --color-accent-cyan: #00FFFF;
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #A0A0A0;
+            --color-surface-glass: rgba(255, 255, 255, 0.08);
+            --glow-primary: 0 0 15px rgba(255, 107, 53, 0.7);
+            --blur-backdrop: blur(10px);
+        }
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top left, var(--color-bg-navy), var(--color-bg-dark) 70%);
+            color: var(--color-text-primary); min-height: 100vh;
+        }
+        .page-container {
+            width: 100%; min-height: 100vh; overflow-y: auto;
+            padding-bottom: 70px; display: flex;
+            flex-direction: column; align-items: center;
+        }
+        .page-header {
+            width: 100%; text-align: center;
+            padding: 24px 16px;
+        }
+        .page-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .tab-bar {
+            display: flex; justify-content: space-around;
+            width: 90%; max-width: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px; padding: 8px; margin: 24px auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .tab-btn {
+            flex-grow: 1; text-align: center; padding: 10px;
+            border-radius: 8px; font-size: 1rem; font-weight: 500;
+            color: var(--color-text-secondary); cursor: pointer;
+            transition: all 0.3s ease; border: none; background: transparent;
+        }
+        .tab-btn.active {
+            background-color: var(--color-bg-navy);
+            color: var(--color-text-primary);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .tab-content {
+            display: none; padding: 16px 0; width: 90%; max-width: 400px;
+            height: 100%; flex-direction: column;
+        }
+        .tab-content.active { display: flex; }
+        
+        /* Chat Container and Bubbles */
+        .chat-bubbles-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+            min-height: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chat-bubble {
+            margin-bottom: 16px;
+            padding: 14px 18px;
+            border-radius: 20px;
+            max-width: 85%;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .chat-bubble.ai {
+            background: var(--color-surface-glass);
+            backdrop-filter: var(--blur-backdrop);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            float: left;
+            clear: both;
+            align-self: flex-start;
+        }
+        .chat-bubble.user {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent-magenta));
+            color: var(--color-text-primary);
+            float: right;
+            clear: both;
+            align-self: flex-end;
+        }
+        .chat-input-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: var(--blur-backdrop);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            margin-top: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .chat-input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: var(--color-text-primary);
+            padding: 8px 16px;
+            font-size: 1rem;
+        }
+        .chat-input:focus {
+            outline: none;
+        }
+        .send-btn {
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent-magenta));
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: var(--color-text-primary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 10px rgba(255, 107, 53, 0.4);
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            display: block; width: 100%; padding: 16px; text-align: center;
+            border-radius: 12px; font-weight: bold; text-decoration: none;
+            margin-top: 16px; background: linear-gradient(90deg, var(--color-primary), var(--color-accent-magenta));
+            color: var(--color-text-primary); box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+            border: none; cursor: pointer;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--color-primary);
+            width: 20px; height: 20px;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Diet Plan Cards */
+        .diet-plan-container {
+            width: 100%;
+            padding: 0 16px;
+        }
+        .meal-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: var(--blur-backdrop);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .meal-card:hover {
+            transform: translateY(-5px);
+        }
+        .meal-card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .meal-card-header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 16px;
+            border: 2px solid var(--color-primary);
+        }
+        .meal-card-header h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--color-primary);
+        }
+        .meal-details p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--color-text-secondary);
+        }
+
+        /* Bottom Navigation Bar Styles */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: var(--blur-backdrop);
+            border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex;
+            justify-content: space-around; align-items: center; z-index: 100;
+        }
+        .nav-item {
+            color: var(--color-text-secondary); font-size: 0.8rem; text-align: center;
+            text-decoration: none; display: flex; flex-direction: column;
+            align-items: center; cursor: pointer; padding: 8px 4px;
+        }
+        .nav-item.active { color: var(--color-primary); }
+        .nav-item svg {
+            width: 24px; height: 24px; margin-bottom: 4px;
+            fill: var(--color-text-secondary);
+        }
+        .nav-item.active svg { fill: var(--color-primary); filter: var(--glow-primary); }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <h2>AI Coach</h2>
+        </div>
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab-target="ai-coach">AI Coach</button>
+            <button class="tab-btn" data-tab-target="diet-plan">Diet Plan</button>
+        </div>
+
+        <div id="ai-coach" class="tab-content active">
+            <div class="chat-bubbles-container">
+                <div class="chat-bubble user">
+                    What's my best post-workout meal?
+                </div>
+                <div class="chat-bubble ai">
+                    <p>Based on your goal, a high-protein, moderate-carb meal is recommended. Consider a chicken salad with quinoa.</p>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" placeholder="Type a message...">
+                <button class="send-btn">➤</button>
+            </div>
+        </div>
+
+        <div id="diet-plan" class="tab-content">
+            <div class="diet-plan-container">
+                <div class="meal-card">
+                    <div class="meal-card-header">
+                        <img src="https://placehold.co/80x80/12122D/A0A0A0?text=B" alt="Breakfast Placeholder">
+                        <h4>Breakfast</h4>
+                    </div>
+                    <div class="meal-details">
+                        <p>Morning Oats: Oats with berries, almonds, and a scoop of protein powder.</p>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-card-header">
+                        <img src="https://placehold.co/80x80/12122D/A0A0A0?text=L" alt="Lunch Placeholder">
+                        <h4>Lunch</h4>
+                    </div>
+                    <div class="meal-details">
+                        <p>Grilled Chicken & Greens: Lean grilled chicken breast with a fresh salad of mixed greens, cucumber, and a light vinaigrette.</p>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-card-header">
+                        <img src="https://placehold.co/80x80/12122D/A0A0A0?text=D" alt="Dinner Placeholder">
+                        <h4>Dinner</h4>
+                    </div>
+                    <div class="meal-details">
+                        <p>Baked Salmon with Roasted Veggies: A baked salmon fillet served with roasted broccoli, bell peppers, and sweet potato.</p>
+                    </div>
+                </div>
+            </div>
+            <button id="generate-diet-btn" class="btn-primary">Generate New Diet Plan ✨</button>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
+            <span>Home</span>
+        </a>
+        <a href="workout.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.5l-5-5 1.41-1.41L11 14.67l7.59-7.59L20 8.5l-9 9z" /></svg>
+            <span>Workout</span>
+        </a>
+        <a href="ai-diet.html" class="nav-item active">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12zM15 8H9v2h6V8z" /></svg>
+            <span>AI Coach</span>
+        </a>
+        <a href="reels.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11V3c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v8c0 1.66 1.34 3 3 3s3-1.34 3-3zm-2-8h2v8h-2V3zM8 3h2v8H8V3zm10 10.5c0-.83-.67-1.5-1.5-1.5S15 12.67 15 13.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5zM6 13.5c0-.83-.67-1.5-1.5-1.5S3 12.67 3 13.5s.67 1.5 1.5 1.5S6 14.33 6 13.5zM12 18v2H4v-2h8zm6 0v2h-4v-2h4z" /></svg>
+            <span>Reels</span>
+        </a>
+        <a href="shop.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.5 10c-1.63 0-3.06.66-4.14 1.76l-3.53-3.53C11.66 8.56 12 7.78 12 7s-.34-1.56-.67-2.23L9.58 6.42A4.997 4.997 0 0 0 7 6c-2.76 0-5 2.24-5 5s2.24 5 5 5c.78 0 1.56-.34 2.23-.67l2.82 2.82c-.52.75-.82 1.64-.82 2.58 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5zm-8.87.13L13.87 14.7c.75.52 1.64.82 2.58.82 2.76 0 5-2.24 5-5s-2.24-5-5-5c-2.76 0-5 2.24-5 5zm-3.13 5.37c-1.63 0-3.06-.66-4.14-1.76l-3.53 3.53c.66.5.94 1.13 1.14 1.83.67 2.23 2.7 3.86 5.09 3.86 2.76 0 5-2.24 5-5s-2.24-5-5-5c-.78 0-1.56.34-2.23.67z" /></svg>
+            <span>Shop</span>
+        </a>
+    </nav>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const generateDietBtn = document.getElementById('generate-diet-btn');
+            const aiCoachContent = document.getElementById('ai-coach');
+            const dietPlanContent = document.getElementById('diet-plan');
+
+            // Dummy user profile for now
+            const userProfile = {
+                height: 175,
+                weight: 75,
+                goal: 'Build Muscle'
+            };
+
+            const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=";
+            const API_KEY = "";
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const targetTabId = tab.getAttribute('data-tab-target');
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(targetTabId).classList.add('active');
+                });
+            });
+
+            const createChatBubble = (text, type, parent) => {
+                const bubble = document.createElement('div');
+                bubble.classList.add('chat-bubble', type);
+                bubble.innerHTML = `<p>${text}</p>`;
+                parent.appendChild(bubble);
+                return bubble;
+            };
+
+            const generateMealPlan = async (button, contentContainer) => {
+                const height = userProfile.height || '175';
+                const weight = userProfile.weight || '75';
+                const goal = userProfile.goal || 'Build Muscle';
+
+                const originalButtonText = button.innerHTML;
+                button.innerHTML = `<div class="loading-spinner"></div> Generating...`;
+                button.disabled = true;
+
+                const prompt = `You are a professional nutritionist. Based on a user with a height of ${height}cm, weight of ${weight}kg, and a fitness goal of "${goal}", create a simple, healthy, one-day meal plan. The response must be a JSON array of objects. Each object should have three keys: "meal" (e.g., "Breakfast"), "title" (e.g., "Scrambled Eggs"), and "description" (a brief description of the meal). The array should contain exactly 3 meals: Breakfast, Lunch, and Dinner. Respond with only the JSON array.`;
+
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            generationConfig: {
+                                responseMimeType: "application/json"
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const mealPlanData = JSON.parse(result.candidates[0].content.parts[0].text);
+
+                    contentContainer.innerHTML = '';
+                    mealPlanData.forEach(meal => {
+                        const mealCard = document.createElement('div');
+                        mealCard.classList.add('meal-card');
+                        mealCard.innerHTML = `
+                            <div class="meal-card-header">
+                                <img src="https://placehold.co/80x80/12122D/A0A0A0?text=${meal.meal.charAt(0)}" alt="${meal.meal} Placeholder">
+                                <h4>${meal.meal}</h4>
+                            </div>
+                            <div class="meal-details">
+                                <p><strong>${meal.title}</strong></p>
+                                <p>${meal.description}</p>
+                            </div>
+                        `;
+                        contentContainer.appendChild(mealCard);
+                    });
+
+                } catch (error) {
+                    console.error('Error generating meal plan:', error);
+                    alert('Failed to generate meal plan. Please try again.');
+                } finally {
+                    button.innerHTML = originalButtonText;
+                    button.disabled = false;
+                }
+            };
+            
+            generateDietBtn.addEventListener('click', () => {
+                 generateMealPlan(generateDietBtn, dietPlanContent.querySelector('.diet-plan-container'));
+            });
+
+        });
+    </script>
+</body>
+</html>

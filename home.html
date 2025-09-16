@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolve AI - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-bg-dark: #0A0A0F; 
+            --color-bg-navy: #12122D;
+            --color-primary: #FF6B35; 
+            --color-accent-magenta: #FF2E88;
+            --color-accent-cyan: #00FFFF; 
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #A0A0A0; 
+            --color-surface-glass: rgba(255, 255, 255, 0.08);
+            --glow-primary: 0 0 15px rgba(255, 107, 53, 0.7); 
+            --blur-backdrop: blur(10px);
+        }
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top left, var(--color-bg-navy), var(--color-bg-dark) 70%);
+            color: var(--color-text-primary); height: 100vh;
+        }
+        .page-container {
+            width: 100%; height: 100%; overflow-y: auto;
+            padding-bottom: 70px; display: flex;
+            flex-direction: column; align-items: center;
+        }
+        .home-header {
+            width: 100%; display: flex; justify-content: space-between;
+            align-items: center; padding: 24px 16px;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--color-primary); }
+        .icon-group { display: flex; align-items: center; gap: 16px; }
+        .icon { font-size: 1.5rem; color: var(--color-text-secondary); }
+        .image-container {
+            width: 90%; background: var(--color-surface-glass);
+            backdrop-filter: var(--blur-backdrop); border-radius: 20px;
+            margin: 16px; padding: 16px; display: flex;
+            flex-direction: column; align-items: center;
+        }
+        .image-container-row {
+            display: flex; gap: 16px; justify-content: center; width: 100%;
+        }
+        .image-item {
+            display: flex; flex-direction: column; align-items: center; width: 50%;
+        }
+        .image-item img {
+            width: 100%; height: auto; border-radius: 12px; object-fit: cover;
+            filter: brightness(0.8);
+        }
+        .image-item-label {
+            margin-top: 8px; font-size: 0.9rem; color: var(--color-text-secondary);
+        }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 12px; margin-top: auto; padding: 0 16px 24px 16px;
+            width: 100%;
+        }
+        .stats-card {
+            background: var(--color-surface-glass); backdrop-filter: var(--blur-backdrop);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
+            text-align: center; padding: 16px 8px; font-size: 0.8rem;
+        }
+        .stats-card .icon {
+            display: block; font-size: 1.5rem; margin-bottom: 8px;
+        }
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: var(--blur-backdrop);
+            border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex;
+            justify-content: space-around; align-items: center;
+        }
+        .nav-item {
+            color: var(--color-text-secondary); font-size: 0.8rem; text-align: center;
+            text-decoration: none; display: flex; flex-direction: column;
+            align-items: center;
+        }
+        .nav-item.active { color: var(--color-primary); }
+        .nav-item svg {
+            width: 24px; height: 24px; margin-bottom: 4px;
+            fill: var(--color-text-secondary);
+        }
+        .nav-item.active svg { fill: var(--color-primary); filter: var(--glow-primary); }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="home-header">
+            <div class="logo">Evolve AI</div>
+            <div class="icon-group">
+                <span class="icon">✨</span>
+                <a href="profile.html" class="icon">👤</a>
+            </div>
+        </div>
+
+        <div class="image-container">
+            <div class="image-container-row">
+                <div class="image-item">
+                    <img src="https://placehold.co/400x400/12122D/A0A0A0?text=Current" alt="Current Body">
+                    <span class="image-item-label">Current</span>
+                </div>
+                <div class="image-item">
+                    <img src="https://placehold.co/400x400/12122D/A0A0A0?text=After" alt="After Transformation">
+                    <span class="image-item-label">After</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stats-card">
+                <span class="icon">👟</span>
+                <span>8,432 Steps</span>
+            </div>
+            <div class="stats-card">
+                <span class="icon">🔥</span>
+                <span>1,240 kcal</span>
+            </div>
+            <div class="stats-card">
+                <span class="icon">🌙</span>
+                <span>6h 12m Sleep</span>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
+                <span>Home</span>
+            </a>
+            <a href="workout.html" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.5l-5-5 1.41-1.41L11 14.67l7.59-7.59L20 8.5l-9 9z" /></svg>
+                <span>Workout</span>
+            </a>
+            <a href="aicoach.html" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12zM15 8H9v2h6V8z" /></svg>
+                <span>AI Coach</span>
+            </a>
+            <a href="reels.html" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11V3c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v8c0 1.66 1.34 3 3 3s3-1.34 3-3zm-2-8h2v8h-2V3zM8 3h2v8H8V3zm10 10.5c0-.83-.67-1.5-1.5-1.5S15 12.67 15 13.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5zM6 13.5c0-.83-.67-1.5-1.5-1.5S3 12.67 3 13.5s.67 1.5 1.5 1.5S6 14.33 6 13.5zM12 18v2H4v-2h8zm6 0v2h-4v-2h4z" /></svg>
+                <span>Reels</span>
+            </a>
+            <a href="shop.html" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.5 10c-1.63 0-3.06.66-4.14 1.76l-3.53-3.53C11.66 8.56 12 7.78 12 7s-.34-1.56-.67-2.23L9.58 6.42A4.997 4.997 0 0 0 7 6c-2.76 0-5 2.24-5 5s2.24 5 5 5c.78 0 1.56-.34 2.23-.67l2.82 2.82c-.52.75-.82 1.64-.82 2.58 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5zm-8.87.13L13.87 14.7c.75.52 1.64.82 2.58.82 2.76 0 5-2.24 5-5s-2.24-5-5-5c-2.76 0-5 2.24-5 5zm-3.13 5.37c-1.63 0-3.06-.66-4.14-1.76l-3.53 3.53c.66.5.94 1.13 1.14 1.83.67 2.23 2.7 3.86 5.09 3.86 2.76 0 5-2.24 5-5s-2.24-5-5-5c-.78 0-1.56.34-2.23.67z" /></svg>
+                <span>Shop</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>

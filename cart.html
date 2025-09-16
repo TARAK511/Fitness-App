@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolve AI - Cart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-bg-dark: #0A0A0F;
+            --color-bg-navy: #12122D;
+            --color-primary: #FF6B35;
+            --color-accent-magenta: #FF2E88;
+            --color-accent-cyan: #00FFFF;
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #A0A0A0;
+            --color-surface-glass: rgba(255, 255, 255, 0.08);
+            --glow-primary: 0 0 15px rgba(255, 107, 53, 0.7);
+            --blur-backdrop: blur(10px);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: radial-gradient(circle at top left, var(--color-bg-navy), var(--color-bg-dark) 70%);
+            color: var(--color-text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .mobile-container {
+            max-width: 414px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #111;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #333;
+            border-right: 1px solid #333;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border-bottom: 1px solid #333;
+            flex-shrink: 0;
+        }
+        .app-name {
+            display: flex;
+            align-items: center;
+        }
+        .app-name .logo {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+        .header-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            color: #fff;
+        }
+        .content {
+            padding: 20px 15px;
+            flex-grow: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .content::-webkit-scrollbar {
+            display: none;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: var(--blur-backdrop);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+        .item-details {
+            flex-grow: 1;
+        }
+        .item-details h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .item-details p {
+            font-size: 14px;
+            color: var(--color-primary);
+        }
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .item-controls button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--color-text-primary);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .item-controls span {
+            font-size: 16px;
+        }
+        .cart-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: var(--blur-backdrop);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        .cart-summary .total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent-magenta));
+            color: var(--color-text-primary);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+        .bottom-nav {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: var(--blur-backdrop);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 414px;
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--color-text-secondary);
+            font-size: 10px;
+            transition: color 0.3s;
+        }
+        .nav-item.active {
+            color: var(--color-primary);
+        }
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <div class="app-name">
+                <img src="https://placehold.co/60x60/12122D/FF6B35?text=Logo" alt="Logo" class="logo">
+            </div>
+            <div class="header-icons">
+                <a href="cart.html" class="header-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+            </div>
+        </div>
+        <div class="content">
+            <h1 class="page-title">Your Cart</h1>
+            <div id="cart-items-container"></div>
+            <div class="cart-summary">
+                <div class="total">
+                    <span>Total:</span>
+                    <span id="cart-total">$0.00</span>
+                </div>
+            </div>
+            <a href="checkout.html" class="checkout-btn">Proceed to Checkout</a>
+        </div>
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item">
+                <i class="fas fa-home nav-icon"></i>
+                <span>Home</span>
+            </a>
+            <a href="workout.html" class="nav-item">
+                <i class="fas fa-dumbbell nav-icon"></i>
+                <span>Workouts</span>
+            </a>
+            <a href="ai-diet.html" class="nav-item">
+                <i class="fas fa-utensils nav-icon"></i>
+                <span>AI Coach</span>
+            </a>
+            <a href="shop.html" class="nav-item active">
+                <i class="fas fa-shopping-bag nav-icon"></i>
+                <span>Shop</span>
+            </a>
+            <a href="reels.html" class="nav-item">
+                <i class="fas fa-video nav-icon"></i>
+                <span>Reels</span>
+            </a>
+        </nav>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cartItemsContainer = document.getElementById('cart-items-container');
+            const cartTotalSpan = document.getElementById('cart-total');
+
+            function renderCart() {
+                const cart = JSON.parse(localStorage.getItem('cart')) || {};
+                let total = 0;
+                cartItemsContainer.innerHTML = '';
+
+                if (Object.keys(cart).length === 0) {
+                    cartItemsContainer.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary);">Your cart is empty.</p>';
+                } else {
+                    for (const productId in cart) {
+                        const item = cart[productId];
+                        total += item.price * item.quantity;
+
+                        const itemDiv = document.createElement('div');
+                        itemDiv.classList.add('cart-item');
+                        itemDiv.innerHTML = `
+                            <img src="https://placehold.co/60x60/A0A0A0/0A0A0F?text=${item.name.charAt(0)}" alt="${item.name}">
+                            <div class="item-details">
+                                <h3>${item.name}</h3>
+                                <p>$${(item.price * item.quantity).toFixed(2)}</p>
+                            </div>
+                            <div class="item-controls">
+                                <button class="decrease-qty" data-id="${productId}">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="increase-qty" data-id="${productId}">+</button>
+                            </div>
+                        `;
+                        cartItemsContainer.appendChild(itemDiv);
+                    }
+                }
+                cartTotalSpan.textContent = `$${total.toFixed(2)}`;
+                localStorage.setItem('cart', JSON.stringify(cart));
+            }
+
+            cartItemsContainer.addEventListener('click', (e) => {
+                const cart = JSON.parse(localStorage.getItem('cart')) || {};
+                const target = e.target;
+
+                if (target.classList.contains('increase-qty')) {
+                    const productId = target.dataset.id;
+                    cart[productId].quantity++;
+                } else if (target.classList.contains('decrease-qty')) {
+                    const productId = target.dataset.id;
+                    cart[productId].quantity--;
+                    if (cart[productId].quantity <= 0) {
+                        delete cart[productId];
+                    }
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart();
+            });
+
+            renderCart();
+        });
+    </script>
+</body>
+</html>

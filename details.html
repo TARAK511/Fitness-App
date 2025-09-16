@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolve AI - Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg-dark: #0A0A0F; --color-bg-navy: #12122D;
+            --color-primary: #FF6B35; --color-accent-magenta: #FF2E88;
+            --color-accent-cyan: #00FFFF; --color-text-primary: #FFFFFF;
+            --color-text-secondary: #A0A0A0; --color-surface-glass: rgba(255, 255, 255, 0.08);
+            --glow-primary: 0 0 15px rgba(255, 107, 53, 0.7); --blur-backdrop: blur(10px);
+        }
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top left, var(--color-bg-navy), var(--color-bg-dark) 70%);
+            color: var(--color-text-primary); height: 100vh; display: flex;
+            justify-content: center; align-items: center;
+        }
+        .card {
+            background: var(--color-surface-glass); backdrop-filter: var(--blur-backdrop);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); padding: 24px;
+            margin: 16px; width: 90%; max-width: 400px;
+        }
+        h2 { text-align: center; margin-top: 0; }
+        .progress-indicator { display: flex; justify-content: center; margin-bottom: 24px; }
+        .progress-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2); margin: 0 4px;
+        }
+        .progress-dot.active { background: var(--color-primary); }
+        input, select {
+            width: 100%; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
+            padding: 16px; color: var(--color-text-primary); font-size: 1rem;
+            margin-bottom: 16px; -webkit-appearance: none;
+        }
+        .btn {
+            display: block; width: 100%; padding: 16px; text-align: center;
+            border-radius: 12px; font-weight: bold; text-decoration: none;
+            margin-top: 16px;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent-magenta));
+            color: var(--color-text-primary); box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="progress-indicator">
+            <div class="progress-dot active"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+        </div>
+        <h2>Your Details</h2>
+        <input type="number" placeholder="Height (cm)">
+        <input type="number" placeholder="Weight (kg)">
+        <select>
+            <option value="" disabled selected>Select your Fitness Goal</option>
+            <option value="Build Muscle">Build Muscle</option>
+            <option value="Lose Weight">Lose Weight</option>
+            <option value="Improve Endurance">Improve Endurance</option>
+        </select>
+        <a href="home.html" class="btn btn-primary">Continue</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolve AI - Checkout</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-bg-dark: #0A0A0F;
+            --color-bg-navy: #12122D;
+            --color-primary: #FF6B35;
+            --color-accent-magenta: #FF2E88;
+            --color-accent-cyan: #00FFFF;
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #A0A0A0;
+            --color-surface-glass: rgba(255, 255, 255, 0.08);
+            --glow-primary: 0 0 15px rgba(255, 107, 53, 0.7);
+            --blur-backdrop: blur(10px);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: radial-gradient(circle at top left, var(--color-bg-navy), var(--color-bg-dark) 70%);
+            color: var(--color-text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .mobile-container {
+            max-width: 414px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #111;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #333;
+            border-right: 1px solid #333;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border-bottom: 1px solid #333;
+            flex-shrink: 0;
+        }
+        .app-name {
+            display: flex;
+            align-items: center;
+        }
+        .app-name .logo {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+        .header-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            color: #fff;
+        }
+        .content {
+            padding: 20px 15px;
+            flex-grow: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .content::-webkit-scrollbar {
+            display: none;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .checkout-form {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: var(--blur-backdrop);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--color-text-secondary);
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--color-text-primary);
+        }
+        .total-summary {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .pay-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent-magenta));
+            color: var(--color-text-primary);
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .bottom-nav {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: var(--blur-backdrop);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 414px;
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--color-text-secondary);
+            font-size: 10px;
+            transition: color 0.3s;
+        }
+        .nav-item.active {
+            color: var(--color-primary);
+        }
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        /* New styles for the notification */
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            z-index: 500;
+            text-align: center;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .notification i {
+            font-size: 50px;
+            color: var(--color-accent-cyan);
+            margin-bottom: 15px;
+            animation: scaleIn 0.5s ease-in-out;
+        }
+        .notification p {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        @keyframes scaleIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <div class="app-name">
+                <img src="https://placehold.co/60x60/12122D/FF6B35?text=Logo" alt="Logo" class="logo">
+            </div>
+            <div class="header-icons">
+                <a href="cart.html" class="header-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+            </div>
+        </div>
+        <div class="content">
+            <h1 class="page-title">Checkout</h1>
+            <div class="checkout-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" placeholder="123 Fitness St">
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" placeholder="Evolve City">
+                </div>
+                <div class="form-group">
+                    <label for="card">Card Number</label>
+                    <input type="text" id="card" placeholder="•••• •••• •••• ••••">
+                </div>
+            </div>
+            <div class="total-summary">
+                <span>Total:</span>
+                <span id="final-total">$0.00</span>
+            </div>
+            <button id="pay-btn" class="pay-btn">Pay Now</button>
+        </div>
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item">
+                <i class="fas fa-home nav-icon"></i>
+                <span>Home</span>
+            </a>
+            <a href="workout.html" class="nav-item">
+                <i class="fas fa-dumbbell nav-icon"></i>
+                <span>Workouts</span>
+            </a>
+            <a href="ai-diet.html" class="nav-item">
+                <i class="fas fa-utensils nav-icon"></i>
+                <span>AI Coach</span>
+            </a>
+            <a href="shop.html" class="nav-item active">
+                <i class="fas fa-shopping-bag nav-icon"></i>
+                <span>Shop</span>
+            </a>
+            <a href="reels.html" class="nav-item">
+                <i class="fas fa-video nav-icon"></i>
+                <span>Reels</span>
+            </a>
+        </nav>
+    </div>
+    <!-- Order placed notification -->
+    <div id="order-notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <p>Order Placed!</p>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const finalTotalSpan = document.getElementById('final-total');
+            const payBtn = document.getElementById('pay-btn');
+            const orderNotification = document.getElementById('order-notification');
+
+            function getCartTotal() {
+                const cart = JSON.parse(localStorage.getItem('cart')) || {};
+                let total = 0;
+                for (const productId in cart) {
+                    const item = cart[productId];
+                    total += item.price * item.quantity;
+                }
+                finalTotalSpan.textContent = `$${total.toFixed(2)}`;
+            }
+
+            payBtn.addEventListener('click', () => {
+                // Show the notification
+                orderNotification.style.display = 'flex';
+                
+                // Set a timeout to hide the notification and redirect
+                setTimeout(() => {
+                    localStorage.removeItem('cart');
+                    window.location.href = 'shop.html';
+                }, 2000); // 2 seconds delay
+            });
+
+            getCartTotal();
+        });
+    </script>
+</body>
+</html>

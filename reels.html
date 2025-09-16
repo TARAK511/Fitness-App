@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitness App - Reels</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --color-bg-dark: #0A0A0F;
+      --color-bg-navy: #12122D;
+      --color-primary: #FF6B35;
+      --color-accent-magenta: #FF2E88;
+      --color-accent-cyan: #00FFFF;
+      --color-text-primary: #FFFFFF;
+      --color-text-secondary: #A0A0A0;
+      --color-surface-glass: rgba(255, 255, 255, 0.08);
+      --glow-primary: 0 0 15px rgba(255, 107, 53, 0.7);
+      --blur-backdrop: blur(10px);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body, html {
+      height: 100%;
+      width: 100%;
+      background: var(--color-bg-dark);
+      color: var(--color-text-primary);
+      overflow: hidden;
+    }
+    .container {
+      height: 100vh;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      background: #111;
+      border-left: 1px solid #333;
+      border-right: 1px solid #333;
+    }
+    .header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      border-bottom: 1px solid #333;
+      z-index: 100;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .header i {
+      font-size: 20px;
+    }
+    .reels-container {
+      height: 100%;
+      width: 100%;
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      scroll-behavior: smooth;
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+    .reels-container::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, and Opera */
+    }
+    .reel {
+      height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .reel video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .reel-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 30%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+      padding-bottom: 80px;
+    }
+    .reel-user {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .reel-user img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+      border: 2px solid white;
+    }
+    .reel-user-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .reel-user-info .username {
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .reel-user-info .follow {
+      color: var(--color-primary);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .reel-description {
+      margin-bottom: 15px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .reel-audio {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .reel-audio i {
+      margin-right: 8px;
+    }
+    .reel-actions {
+      position: absolute;
+      right: 15px;
+      bottom: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+    }
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 13px;
+    }
+    .action-btn i {
+      font-size: 26px;
+      margin-bottom: 5px;
+      transition: all 0.2s;
+    }
+    .action-btn .fa-heart {
+      color: white;
+    }
+    .action-btn .fa-heart.active {
+      color: var(--color-primary);
+    }
+    .reel-tags {
+      margin-top: 5px;
+      font-size: 14px;
+      color: var(--color-primary);
+    }
+
+    /* Comment Modal */
+    .comment-modal {
+      position: fixed;
+      bottom: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 500px;
+      background: var(--color-bg-dark);
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      padding: 20px;
+      z-index: 1000;
+      transition: bottom 0.3s ease;
+    }
+    .comment-modal.show {
+      bottom: 70px;
+    }
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .comment-header h3 {
+      font-size: 18px;
+    }
+    .comment-header i {
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .comment-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+    }
+    .comment-item {
+      display: flex;
+      margin-bottom: 15px;
+    }
+    .comment-item img {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .comment-content {
+      flex: 1;
+    }
+    .comment-username {
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .comment-text {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .comment-actions {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+    .comment-actions span {
+      margin-right: 15px;
+    }
+    .comment-input {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 25px;
+      padding: 8px 15px;
+    }
+    .comment-input input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--color-text-primary);
+      padding: 5px;
+      outline: none;
+    }
+    .comment-input i {
+      color: var(--color-primary);
+      font-size: 18px;
+      cursor: pointer;
+    }
+    @media (max-width: 600px) {
+      .comment-modal {
+        max-width: 100vw;
+        padding: 8px 4px;
+        border-radius: 10px 10px 0 0;
+      }
+      .comment-header h3 {
+        font-size: 15px;
+      }
+      .comment-header i {
+        font-size: 18px;
+      }
+      .comment-list {
+        max-height: 180px;
+        margin-bottom: 8px;
+      }
+      .comment-item img {
+        width: 28px;
+        height: 28px;
+        margin-right: 6px;
+      }
+      .comment-username {
+        font-size: 12px;
+      }
+      .comment-text {
+        font-size: 12px;
+      }
+      .comment-actions {
+        font-size: 10px;
+      }
+      .comment-input {
+        padding: 5px 8px;
+      }
+      .comment-input input {
+        font-size: 12px;
+        padding: 3px;
+      }
+      .comment-input i {
+        font-size: 16px;
+      }
+    }
+
+    /* Share Modal */
+    .share-modal {
+      position: fixed;
+      bottom: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 500px;
+      background: var(--color-bg-dark);
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      padding: 20px;
+      z-index: 1000;
+      transition: bottom 0.3s ease;
+    }
+    .share-modal.show {
+      bottom: 70px;
+    }
+    .share-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .share-header h3 {
+      font-size: 18px;
+    }
+    .share-header i {
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .share-options {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .share-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .share-option i {
+      font-size: 24px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .share-option span {
+      font-size: 12px;
+      text-align: center;
+    }
+    .share-link {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 15px;
+    }
+    .share-link span {
+      flex: 1;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .share-link i {
+      font-size: 18px;
+      color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 900;
+      display: none;
+    }
+    .overlay.show {
+      display: block;
+    }
+
+    /* Footer Navigation */
+    .footer-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 500px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: var(--blur-backdrop);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    .footer-nav a {
+      flex: 1;
+      text-align: center;
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .footer-nav a i {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+    .footer-nav a.active {
+      color: var(--color-primary);
+    }
+    .footer-nav a:hover {
+      color: var(--color-primary);
+    }
+
+    @media (max-width: 600px) {
+      .footer-nav a i {
+        font-size: 16px;
+      }
+      .footer-nav a {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Reels</h1>
+      <i class="fas fa-camera"></i>
+    </div>
+
+    <div class="reels-container" id="reelsContainer">
+      <!-- Reel 1 -->
+      <div class="reel">
+  <video src="videos/reel1.mp4" loop muted playsinline 
+         onerror="this.onerror=null;this.src='https://placehold.co/400x800/0A0A0F/A0A0A0?text=Video+Not+Found';">
+  </video>
+  <div class="reel-overlay">
+    <div class="reel-user">
+      <img src="https://images.unsplash.com/photo-1502767089025-6572583495d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=60" alt="User">
+      <div class="reel-user-info">
+        <span class="username">@my_username</span>
+        <span class="follow">Follow</span>
+      </div>
+    </div>
+    <p class="reel-description">Description for your new video! #fitness #workout</p>
+    <div class="reel-audio">
+      <i class="fas fa-music"></i>
+      <span>Original Sound - Me</span>
+    </div>
+  </div>
+  <div class="reel-actions">
+    <div class="action-btn" onclick="toggleLike(this)">
+      <i class="fas fa-heart"></i>
+      <span>0</span>
+    </div>
+    <div class="action-btn" onclick="toggleComment()">
+      <i class="fas fa-comment"></i>
+      <span>0</span>
+    </div>
+    <div class="action-btn" onclick="toggleShare()">
+      <i class="fas fa-share"></i>
+      <span>0</span>
+    </div>
+    <div class="action-btn">
+      <i class="fas fa-ellipsis-h"></i>
+    </div>
+  </div>
+</div>
+
+
+      
+      <!-- Reel 2 -->
+      <div class="reel">
+        <video src="https://videos.pexels.com/video-files/6451000/6451000-uhd_2160_4096_25fps.mp4" loop muted playsinline onerror="this.onerror=null;this.src='https://placehold.co/400x800/0A0A0F/A0A0A0?text=Video+Not+Found';"></video>
+        <div class="reel-overlay">
+          <div class="reel-user">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGF2YXRhcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=60" alt="User">
+            <div class="reel-user-info">
+              <span class="username">@coach_mike</span>
+              <span class="follow">Follow</span>
+            </div>
+          </div>
+          <p class="reel-description">Push-up variations for chest development 🏋️ #pushups #chestday #gym</p>
+          <div class="reel-audio">
+            <i class="fas fa-music"></i>
+            <span>Original Sound - Coach Mike</span>
+          </div>
+        </div>
+        <div class="reel-actions">
+          <div class="action-btn" onclick="toggleLike(this)">
+            <i class="fas fa-heart"></i>
+            <span>3.1K</span>
+          </div>
+          <div class="action-btn" onclick="toggleComment()">
+            <i class="fas fa-comment"></i>
+            <span>512</span>
+          </div>
+          <div class="action-btn" onclick="toggleShare()">
+            <i class="fas fa-share"></i>
+            <span>2.1K</span>
+          </div>
+          <div class="action-btn">
+            <i class="fas fa-ellipsis-h"></i>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Reel 3 -->
+      <div class="reel">
+        <video src="https://videos.pexels.com/video-files/5243555/5243555-uhd_2160_4096_25fps.mp4" loop muted playsinline onerror="this.onerror=null;this.src='https://placehold.co/400x800/0A0A0F/A0A0A0?text=Video+Not+Found';"></video>
+        <div class="reel-overlay">
+          <div class="reel-user">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGF2YXRhcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=60" alt="User">
+            <div class="reel-user-info">
+              <span class="username">@yoga_life</span>
+              <span class="follow">Follow</span>
+            </div>
+          </div>
+          <p class="reel-description">Essential post-workout stretches to improve flexibility 🧘‍♀️ #stretching #flexibility #yoga</p>
+          <div class="reel-audio">
+            <i class="fas fa-music"></i>
+            <span>Original Sound - Yoga Life</span>
+          </div>
+        </div>
+        <div class="reel-actions">
+          <div class="action-btn" onclick="toggleLike(this)">
+            <i class="fas fa-heart"></i>
+            <span>4.7K</span>
+          </div>
+          <div class="action-btn" onclick="toggleComment()">
+            <i class="fas fa-comment"></i>
+            <span>823</span>
+          </div>
+          <div class="action-btn" onclick="toggleShare()">
+            <i class="fas fa-share"></i>
+            <span>3.5K</span>
+          </div>
+          <div class="action-btn">
+            <i class="fas fa-ellipsis-h"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comment Modal -->
+  <div class="comment-modal" id="commentModal">
+    <div class="comment-header">
+      <h3>Comments</h3>
+      <i class="fas fa-times" onclick="toggleComment()"></i>
+    </div>
+    <div class="comment-list">
+      <div class="comment-item">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGF2YXRhcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=60" alt="User">
+        <div class="comment-content">
+          <div class="comment-username">fitness_fan99</div>
+          <div class="comment-text">This is exactly what I needed! My form was all wrong before.</div>
+          <div class="comment-actions">
+            <span>2h ago</span>
+            <span>Reply</span>
+            <span>Like</span>
+          </div>
+        </div>
+      </div>
+      <div class="comment-item">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGF2YXRhcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=60" alt="User">
+        <div class="comment-content">
+          <div class="comment-username">gym_lover22</div>
+          <div class="comment-text">How many reps do you recommend for beginners?</div>
+          <div class="comment-actions">
+            <span>1h ago</span>
+            <span>Reply</span>
+            <span>Like</span>
+          </div>
+        </div>
+      </div>
+      <div class="comment-item">
+        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=400&q=60" alt="User">
+        <div class="comment-content">
+          <div class="comment-username">healthy_life</div>
+          <div class="comment-text">I've been doing this for a week and already see results! 😍</div>
+          <div class="comment-actions">
+            <span>45m ago</span>
+            <span>Reply</span>
+            <span>Like</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="comment-input">
+      <input type="text" placeholder="Add a comment...">
+      <i class="fas fa-paper-plane"></i>
+    </div>
+  </div>
+
+  <!-- Share Modal -->
+  <div class="share-modal" id="shareModal">
+    <div class="share-header">
+      <h3>Share Reel</h3>
+      <i class="fas fa-times" onclick="toggleShare()"></i>
+    </div>
+    <div class="share-options">
+      <div class="share-option">
+        <i class="fab fa-facebook-messenger"></i>
+        <span>Message</span>
+      </div>
+      <div class="share-option">
+        <i class="fab fa-whatsapp"></i>
+        <span>WhatsApp</span>
+      </div>
+      <div class="share-option">
+        <i class="fab fa-twitter"></i>
+        <span>Twitter</span>
+      </div>
+      <div class="share-option">
+        <i class="fab fa-facebook"></i>
+        <span>Facebook</span>
+      </div>
+      <div class="share-option">
+        <i class="fab fa-instagram"></i>
+        <span>Instagram</span>
+      </div>
+      <div class="share-option">
+        <i class="fas fa-envelope"></i>
+        <span>Email</span>
+      </div>
+      <div class="share-option">
+        <i class="fas fa-sms"></i>
+        <span>SMS</span>
+      </div>
+      <div class="share-option">
+        <i class="fas fa-link"></i>
+        <span>Copy Link</span>
+      </div>
+    </div>
+    <div class="share-link">
+      <span>https://fitnessapp.com/reel/12345</span>
+      <i class="fas fa-copy" onclick="copyLink()"></i>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="closeModals()"></div>
+
+  <!-- Footer Navigation -->
+  <nav class="footer-nav">
+    <a href="home.html"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="workout.html"><i class="fas fa-dumbbell"></i><span>Workout</span></a>
+    <a href="aicoach.html"><i class="fas fa-utensils"></i><span>AI Coach</span></a> <!-- Fixed link -->
+    <a href="reels.html" class="active"><i class="fas fa-video"></i><span>Reels</span></a>
+    <a href="shop.html"><i class="fas fa-shopping-bag"></i><span>Shop</span></a>
+</nav>
+
+
+
+  <script>
+    // Video autoplay when in view
+    document.addEventListener('DOMContentLoaded', function() {
+      const reelsContainer = document.getElementById('reelsContainer');
+      const videos = document.querySelectorAll('video');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.play();
+          } else {
+            entry.target.pause();
+          }
+        });
+      }, { threshold: 0.8 });
+      
+      videos.forEach(video => {
+        observer.observe(video);
+      });
+      
+      // Handle click to toggle sound
+      videos.forEach(video => {
+        video.addEventListener('click', function() {
+          this.muted = !this.muted;
+        });
+      });
+    });
+
+    // Toggle like button
+    function toggleLike(element) {
+      const heartIcon = element.querySelector('i');
+      heartIcon.classList.toggle('active');
+      
+      // Update like count
+      const countSpan = element.querySelector('span');
+      let count = parseFloat(countSpan.textContent.replace('K', '')) * 1000;
+      
+      if (heartIcon.classList.contains('active')) {
+        count++;
+      } else {
+        count--;
+      }
+      
+      // Format the number
+      if (count >= 1000) {
+        countSpan.textContent = (count / 1000).toFixed(1) + 'K';
+      } else {
+        countSpan.textContent = count.toString();
+      }
+    }
+
+    // Toggle comment modal
+    function toggleComment() {
+      const modal = document.getElementById('commentModal');
+      const overlay = document.getElementById('overlay');
+      
+      modal.classList.toggle('show');
+      overlay.classList.toggle('show');
+    }
+
+    // Toggle share modal
+    function toggleShare() {
+      const modal = document.getElementById('shareModal');
+      const overlay = document.getElementById('overlay');
+      
+      modal.classList.toggle('show');
+      overlay.classList.toggle('show');
+    }
+
+    // Close all modals
+    function closeModals() {
+      document.getElementById('commentModal').classList.remove('show');
+      document.getElementById('shareModal').classList.remove('show');
+      document.getElementById('overlay').classList.remove('show');
+    }
+
+    // Copy to clipboard
+    function copyLink() {
+      const linkText = document.querySelector('.share-link span').textContent;
+      const tempInput = document.createElement('input');
+      tempInput.value = linkText;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+    }
+  </script>
+</body>
+</html>
